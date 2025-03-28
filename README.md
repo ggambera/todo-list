@@ -1,11 +1,12 @@
-# TODO-List APP 
-  React v3 + Vite app for Jay class
+# TODO-List App   
+React v3 + Vite app for Jay class  
+Author: German Gambera
 
 # Description
+A ToDo List application for the Ract Jay Course at CTD Code The Dream
 
 # Installation instructions
     git clone https://github.com/ggambera/todo-list.git
-    npm create vite@latest . -- --template react
     npm install
 
 # How to run the development server
