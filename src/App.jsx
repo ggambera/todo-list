@@ -14,7 +14,6 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      setIsLoading(true);
       const options = {
         method: 'GET',
         headers: {
@@ -23,6 +22,7 @@ function App() {
         },
       };
       try {
+        setIsLoading(true);
         const resp = await fetch(url, options);
         if (!resp.ok) {
           throw new Error(resp.message);
@@ -38,7 +38,6 @@ function App() {
           }
           return todo;
         }));
-
       } catch (error) {
         console.error(error);
         setErrorMessage(error.message);
@@ -134,7 +133,7 @@ function App() {
           return todo;
         }
       });
-      setTodoList([...updatedTodos]);      
+      setTodoList([...updatedTodos]);
     } catch (error) {
       console.error(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
