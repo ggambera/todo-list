@@ -17,8 +17,8 @@ function TodoForm({ onAddTodo }) {
     <>
       <form onSubmit={handleAddTodo}>
         <TextInputWithLabel
-          elementId="todoTitle"
-          label="Todo"
+          elementId={"todoTitle"}
+          label={"Todo"}
           ref={todoTitleInput}
           value={workingTodoTitle}
           onChange={(e) => setWorkingTodoTitle(e.target.value)}></TextInputWithLabel>
