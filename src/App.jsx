@@ -126,14 +126,13 @@ function App() {
       if (!records[0].fields.isCompleted) {
         updatedTodo.isCompleted = false;
       }
-      const updatedTodos = todoList.map((todo) => {
+      setTodoList([...todoList.map((todo) => {
         if (todo.id === updatedTodo.id) {
           return { ...updatedTodo };
         } else {
           return todo;
         }
-      });
-      setTodoList([...updatedTodos]);
+      })]);
     } catch (error) {
       console.error(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
@@ -185,14 +184,13 @@ function App() {
       if (!records[0].fields.isCompleted) {
         updatedTodo.isCompleted = false;
       }
-      const updatedTodos = todoList.map((todo) => {
+      setTodoList([...todoList.map((todo) => {
         if (todo.id === updatedTodo.id) {
           return { ...updatedTodo };
         } else {
           return todo;
         }
-      });
-      setTodoList([...updatedTodos]);
+      })]);
     } catch (error) {
       console.error(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
