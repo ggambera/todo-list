@@ -6,6 +6,9 @@ import TodosViewForm from './features/TodosViewForm';
 
 function App() {
 
+  const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
+  const token = `Bearer ${import.meta.env.VITE_PAT}`;
+
   const encodeUrl = ({ sortField, sortDirection, queryString }) => {
     let searchQuery = '';
     let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
@@ -23,8 +26,6 @@ function App() {
   const [sortDirection, setSortDirection] = useState('desc');
   const [queryString, setQueryString] = useState('');
 
-  const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
-  const token = `Bearer ${import.meta.env.VITE_PAT}`;
 
   useEffect(() => {
     (async () => {
@@ -106,7 +107,16 @@ function App() {
 
   const updateTodo = async (editedTodo) => {
     console.log('App: updateTodo: async');
-    const originalTodo = todoList.find((todo) => todo.id === editedTodo.id)
+    const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
+    // Optimistic Strategy
+    const updatedTodos = todoList.map((todo) => {
+      if (todo.id === editedTodo.id) {
+        return { ...editedTodo };
+      } else {
+        return todo;
+      }
+    });
+    setTodoList([...updatedTodos]);
     const payload = {
       records: [
         {
@@ -132,6 +142,8 @@ function App() {
       if (!resp.ok) {
         throw new Error(resp.message);
       }
+      // Pessimistic Strategy
+      /*
       const { records } = await resp.json();
       const updatedTodo = {
         id: records[0].id,
@@ -147,9 +159,11 @@ function App() {
           return todo;
         }
       })]);
+      */
     } catch (error) {
       console.error(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
+      // Optimistic Strategy
       const revertedTodos = todoList.map((todo) => {
         if (todo.id === originalTodo.id) {
           return { ...originalTodo };
@@ -165,7 +179,21 @@ function App() {
 
   const completeTodo = async (id) => {
     console.log('App: completeTodo: async');
-    const originalTodo = todoList.find((todo) => todo.id === id)
+    const originalTodo = todoList.find((todo) => todo.id === id);
+    // Optimistic Strategy
+    const updatedTodos = todoList.map((todo) => {
+      if (todo.id === id) {
+        const updatedTodo = {
+          id: todo.id,
+          title: todo.title,
+          isCompleted: true
+        };
+        return { ...updatedTodo };
+      } else {
+        return todo;
+      }
+    });
+    setTodoList([...updatedTodos]);    
     const payload = {
       records: [
         {
@@ -190,6 +218,8 @@ function App() {
       if (!resp.ok) {
         throw new Error(resp.message);
       }
+      // Pessimistic Strategy
+      /*
       const { records } = await resp.json();
       const updatedTodo = {
         id: records[0].id,
@@ -205,9 +235,11 @@ function App() {
           return todo;
         }
       })]);
+      */
     } catch (error) {
       console.error(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
+      // Optimistic Strategy
       const revertedTodos = todoList.map((todo) => {
         if (todo.id === originalTodo.id) {
           return { ...originalTodo };
