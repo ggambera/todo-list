@@ -1,5 +1,5 @@
 import './App.css'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import TodoForm from './features/TodoForm'
 import TodoList from './features/TodoList/TodoList'
 import TodosViewForm from './features/TodosViewForm';
@@ -9,15 +9,6 @@ function App() {
   const url = `https://api.airtable.com/v0/${import.meta.env.VITE_BASE_ID}/${import.meta.env.VITE_TABLE_NAME}`;
   const token = `Bearer ${import.meta.env.VITE_PAT}`;
 
-  const encodeUrl = ({ sortField, sortDirection, queryString }) => {
-    let searchQuery = '';
-    let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
-    if (queryString) {
-      searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
-    }
-    return encodeURI(`${url}?${sortQuery}${searchQuery}`);
-  };
-
   const [todoList, setTodoList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -26,6 +17,25 @@ function App() {
   const [sortDirection, setSortDirection] = useState('desc');
   const [queryString, setQueryString] = useState('');
 
+  const encodeUrl = useCallback(() => {
+    let searchQuery = '';
+    let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
+    if (queryString) {
+      searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
+    }
+    return encodeURI(`${url}?${sortQuery}${searchQuery}`);
+  }, [sortField, sortDirection, queryString]);
+
+  /*
+  const encodeUrl = ({ sortField, sortDirection, queryString }) => {
+    let searchQuery = '';
+    let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
+    if (queryString) {
+      searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
+    }
+    return encodeURI(`${url}?${sortQuery}${searchQuery}`);
+  };
+  */
 
   useEffect(() => {
     (async () => {
@@ -38,7 +48,7 @@ function App() {
       };
       try {
         setIsLoading(true);
-        const resp = await fetch(encodeUrl({ sortField, sortDirection, queryString }), options);
+        const resp = await fetch(encodeUrl(sortField, sortDirection, queryString ), options);
         if (!resp.ok) {
           throw new Error(resp.message);
         }
@@ -84,7 +94,7 @@ function App() {
     };
     try {
       setIsSaving(true);
-      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString), options);
+      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString ), options);
       if (!resp.ok) {
         throw new Error(resp.message);
       }
@@ -138,7 +148,7 @@ function App() {
     };
     try {
       setIsSaving(true);
-      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString), options);
+      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString ), options);
       if (!resp.ok) {
         throw new Error(resp.message);
       }
@@ -214,7 +224,7 @@ function App() {
     };
     try {
       setIsSaving(true);
-      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString), options);
+      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString ), options);
       if (!resp.ok) {
         throw new Error(resp.message);
       }
