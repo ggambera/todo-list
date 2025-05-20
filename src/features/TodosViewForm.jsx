@@ -8,7 +8,7 @@ function TodosViewForm({ sortDirection, setSortDirection, sortField, setSortFiel
     const debounce = setTimeout(() => {
       setQueryString(localQueryString)
     }, 500);
-    return () => { clearInterval(debounce) };
+    return () => { clearTimeout(debounce) };
   }, [localQueryString, setQueryString]);
 
   function preventRefresh(event) {
