@@ -26,17 +26,6 @@ function App() {
     return encodeURI(`${url}?${sortQuery}${searchQuery}`);
   }, [sortField, sortDirection, queryString]);
 
-  /*
-  const encodeUrl = ({ sortField, sortDirection, queryString }) => {
-    let searchQuery = '';
-    let sortQuery = `sort[0][field]=${sortField}&sort[0][direction]=${sortDirection}`;
-    if (queryString) {
-      searchQuery = `&filterByFormula=SEARCH("${queryString}",+title)`;
-    }
-    return encodeURI(`${url}?${sortQuery}${searchQuery}`);
-  };
-  */
-
   useEffect(() => {
     (async () => {
       const options = {
@@ -152,24 +141,6 @@ function App() {
       if (!resp.ok) {
         throw new Error(resp.message);
       }
-      // Pessimistic Strategy
-      /*
-      const { records } = await resp.json();
-      const updatedTodo = {
-        id: records[0].id,
-        ...records[0].fields,
-      };
-      if (!records[0].fields.isCompleted) {
-        updatedTodo.isCompleted = false;
-      }
-      setTodoList([...todoList.map((todo) => {
-        if (todo.id === updatedTodo.id) {
-          return { ...updatedTodo };
-        } else {
-          return todo;
-        }
-      })]);
-      */
     } catch (error) {
       console.error(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
@@ -228,24 +199,6 @@ function App() {
       if (!resp.ok) {
         throw new Error(resp.message);
       }
-      // Pessimistic Strategy
-      /*
-      const { records } = await resp.json();
-      const updatedTodo = {
-        id: records[0].id,
-        ...records[0].fields,
-      };
-      if (!records[0].fields.isCompleted) {
-        updatedTodo.isCompleted = false;
-      }
-      setTodoList([...todoList.map((todo) => {
-        if (todo.id === updatedTodo.id) {
-          return { ...updatedTodo };
-        } else {
-          return todo;
-        }
-      })]);
-      */
     } catch (error) {
       console.error(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
