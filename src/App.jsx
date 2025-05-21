@@ -1,8 +1,10 @@
 import './App.css'
+import styles from './App.module.css';
 import { useEffect, useState, useCallback } from 'react';
 import TodoForm from './features/TodoForm'
 import TodoList from './features/TodoList/TodoList'
 import TodosViewForm from './features/TodosViewForm';
+import logo from './assets/todo.png'
 
 function App() {
 
@@ -221,8 +223,11 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Todo List</h1>
+    <div className={styles.block}>
+      <div className={styles.title}>
+        <img src={logo} className={styles.logo} />
+        <h1>Todo List</h1>
+      </div>
       <TodoForm onAddTodo={addTodo}></TodoForm>
       <TodoList todoList={todoList}
         onCompleteTodo={completeTodo}
@@ -235,7 +240,7 @@ function App() {
         setSortField={setSortField}
         queryString={queryString}
         setQueryString={setQueryString}></TodosViewForm>
-      {errorMessage && <div><hr /><p>{errorMessage}</p><button type="button" onClick={cleanErrorMessage}>Dismiss Error Message</button></div>}
+      {errorMessage && <div className={styles.error}><p>{errorMessage}</p><button type="button" onClick={cleanErrorMessage}>Dismiss Error Message</button></div>}
     </div >
   )
 }
