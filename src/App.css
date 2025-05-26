@@ -1,0 +1,39 @@
+body {
+  font-family: 'Roboto', Arial, Helvetica, sans-serif;
+  background-color: #f7f7f7;
+}
+
+#root {
+  background-color: white;
+  margin: 3%;
+  padding: 2%;
+  border-radius: 7px;
+}
+
+h1, h2 {
+  font-weight: 800;
+  color: rgb(47, 47, 47);
+}
+
+button {
+  background-color: white;
+  border-width: 1px;
+  border-color: #f7f7f7;
+  border-radius: 5px;
+  height: 1.5em;
+}
+
+input {
+  margin: 5px;
+  border-width: 1px;
+  border-color: #f7f7f7;
+  border-radius: 5px;
+}
+
+select {
+  margin: 5px;
+  border-width: 1px;
+  border-color: #f7f7f7;
+  border-radius: 5px;
+  height: 2em;
+}
