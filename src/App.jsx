@@ -1,10 +1,16 @@
 import './App.css'
 import styles from './App.module.css';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useReducer } from 'react';
 import TodoForm from './features/TodoForm'
 import TodoList from './features/TodoList/TodoList'
 import TodosViewForm from './features/TodosViewForm';
 import logo from './assets/todo.png'
+import {
+  reducer as todosReducer,
+  actions as todoActions,
+  initialState as initialTodosState,
+  actions,
+} from './reducers/todos.reducer';
 
 function App() {
 
@@ -18,6 +24,8 @@ function App() {
   const [sortField, setSortField] = useState('createdTime');
   const [sortDirection, setSortDirection] = useState('desc');
   const [queryString, setQueryString] = useState('');
+
+  const [todoState, dispatch] = useReducer(todosReducer, initialTodosState);
 
   const encodeUrl = useCallback(() => {
     let searchQuery = '';
@@ -38,12 +46,16 @@ function App() {
         },
       };
       try {
-        setIsLoading(true);
-        const resp = await fetch(encodeUrl(sortField, sortDirection, queryString ), options);
+        /* Before reducer
+        setIsLoading(true); 
+        */
+        dispatch({ type: todoActions.fetchTodos });
+        const resp = await fetch(encodeUrl(sortField, sortDirection, queryString), options);
         if (!resp.ok) {
           throw new Error(resp.message);
         }
         const { records } = await resp.json();
+        /* Before reducer
         setTodoList(records.map((record) => {
           const todo = {
             id: record.id,
@@ -54,11 +66,19 @@ function App() {
           }
           return todo;
         }));
+        */
+        dispatch({ type: todoActions.loadTodos, records: records });
       } catch (error) {
+        /* Before reducer
         console.error(error);
         setErrorMessage(error.message);
+        */
+        dispatch({ type: todoActions.setLoadError, error: error });
       } finally {
+        /* Before reducer 
         setIsLoading(false);
+        */
+        dispatch({ type: todoActions.endRequest });
       }
     })();
   }, [sortField, sortDirection, queryString]);
@@ -84,12 +104,16 @@ function App() {
       body: JSON.stringify(payload),
     };
     try {
+      /* Before reducer
       setIsSaving(true);
-      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString ), options);
+      */
+      dispatch({ type: todoActions.startRequest });
+      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString), options);
       if (!resp.ok) {
         throw new Error(resp.message);
       }
       const { records } = await resp.json();
+      /* Before reducer
       const savedTodo = {
         id: records[0].id,
         ...records[0].fields,
@@ -98,18 +122,27 @@ function App() {
         savedTodo.isCompleted = false;
       }
       setTodoList([...todoList, savedTodo]);
+      */
+      dispatch({ type: todoActions.addTodo, records: records });
     } catch (error) {
+      /* Before reducer
       console.error(error);
       setErrorMessage(error.message);
+      */
+      dispatch({ type: todoActions.setLoadError, error: error });
     } finally {
+      /* Before reducer
       setIsSaving(false);
+      */
+      dispatch({ type: todoActions.endRequest });
     }
   }
 
   const updateTodo = async (editedTodo) => {
     console.log('App: updateTodo: async');
-    const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
+    const originalTodo = todoState.todoList.find((todo) => todo.id === editedTodo.id);
     // Optimistic Strategy
+    /* Before reducer
     const updatedTodos = todoList.map((todo) => {
       if (todo.id === editedTodo.id) {
         return { ...editedTodo };
@@ -118,6 +151,8 @@ function App() {
       }
     });
     setTodoList([...updatedTodos]);
+    */
+    dispatch({ type: todoActions.updateTodo, editedTodo: editedTodo });
     const payload = {
       records: [
         {
@@ -138,15 +173,22 @@ function App() {
       body: JSON.stringify(payload),
     };
     try {
+      /* Before reducer
       setIsSaving(true);
-      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString ), options);
+      */
+      dispatch({ type: todoActions.startRequest });
+      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString), options);
       if (!resp.ok) {
         throw new Error(resp.message);
       }
     } catch (error) {
+      /* Before reducer
       console.error(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
+      */
+      dispatch({ type: todoActions.setLoadError, error: error });
       // Optimistic Strategy
+      /* Before reducer
       const revertedTodos = todoList.map((todo) => {
         if (todo.id === originalTodo.id) {
           return { ...originalTodo };
@@ -155,15 +197,21 @@ function App() {
         }
       });
       setTodoList([...revertedTodos]);
+      */
+      dispatch({ type: todoActions.revertTodo, originalTodo: originalTodo });
     } finally {
+      /* Before reducer
       setIsSaving(false);
+      */
+      dispatch({ type: todoActions.endRequest });
     }
   }
 
   const completeTodo = async (id) => {
     console.log('App: completeTodo: async');
-    const originalTodo = todoList.find((todo) => todo.id === id);
+    const originalTodo = todoState.todoList.find((todo) => todo.id === id);
     // Optimistic Strategy
+    /* Before reducer
     const updatedTodos = todoList.map((todo) => {
       if (todo.id === id) {
         const updatedTodo = {
@@ -176,11 +224,13 @@ function App() {
         return todo;
       }
     });
-    setTodoList([...updatedTodos]);    
+    setTodoList([...updatedTodos]);
+    */
+    dispatch({ type: todoActions.completeTodo, id: id });
     const payload = {
       records: [
         {
-          id: originalTodo.id,
+          id: id,
           fields: {
             isCompleted: true,
           },
@@ -196,15 +246,22 @@ function App() {
       body: JSON.stringify(payload),
     };
     try {
+      /* Before reducer
       setIsSaving(true);
-      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString ), options);
+      */
+      dispatch({ type: todoActions.startRequest });
+      const resp = await fetch(encodeUrl(sortField, sortDirection, queryString), options);
       if (!resp.ok) {
         throw new Error(resp.message);
       }
     } catch (error) {
+      /* Before reducer
       console.error(error);
       setErrorMessage(`${error.message}. Reverting todo...`);
+      */
+      dispatch({ type: todoActions.setLoadError, error: error });
       // Optimistic Strategy
+      /* Before reducer
       const revertedTodos = todoList.map((todo) => {
         if (todo.id === originalTodo.id) {
           return { ...originalTodo };
@@ -213,13 +270,21 @@ function App() {
         }
       });
       setTodoList([...revertedTodos]);
+      */
+      dispatch({ type: todoActions.revertTodo, originalTodo: originalTodo });
     } finally {
+      /* Before reducer
       setIsSaving(false);
+      */
+      dispatch({ type: todoActions.endRequest });
     }
   }
 
   function cleanErrorMessage() {
+    /* Before reducer
     setErrorMessage('');
+    */
+    dispatch({ type: todoActions.clearError });
   }
 
   return (
@@ -229,10 +294,10 @@ function App() {
         <h1>Todo List</h1>
       </div>
       <TodoForm onAddTodo={addTodo}></TodoForm>
-      <TodoList todoList={todoList}
+      <TodoList todoList={todoState.todoList}
         onCompleteTodo={completeTodo}
         onUpdateTodo={updateTodo}
-        isLoading={isLoading}></TodoList>
+        isLoading={todoState.isLoading}></TodoList>
       <div><hr /></div>
       <TodosViewForm sortDirection={sortDirection}
         setSortDirection={setSortDirection}
@@ -240,7 +305,7 @@ function App() {
         setSortField={setSortField}
         queryString={queryString}
         setQueryString={setQueryString}></TodosViewForm>
-      {errorMessage && <div className={styles.error}><p>{errorMessage}</p><button type="button" onClick={cleanErrorMessage}>Dismiss Error Message</button></div>}
+      {todoState.errorMessage && <div className={styles.error}><p>{todoState.errorMessage}</p><button type="button" onClick={cleanErrorMessage}>Dismiss Error Message</button></div>}
     </div >
   )
 }
