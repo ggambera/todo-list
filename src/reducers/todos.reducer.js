@@ -26,7 +26,7 @@ function reducer(state = initialState, action) {
         isLoading: true,
       };
     case actions.loadTodos:
-      const mappedArray = action.records.map((record) => {
+      const todoListLoaded = action.records.map((record) => {
         const todo = {
           id: record.id,
           ...record.fields,
@@ -38,7 +38,7 @@ function reducer(state = initialState, action) {
       });
       return {
         ...state,
-        todoList: mappedArray,
+        todoList: todoListLoaded,
         isLoading: false,
       };
     case actions.setLoadError:
@@ -83,13 +83,6 @@ function reducer(state = initialState, action) {
         ...state,
         todoList: [...updatedTodos],
       };
-      if (action.error) {
-        updatedState = {
-          ...state,
-          todoList: [...updatedTodos],
-          errorMessage: action.error.message,
-        };
-      }
       return updatedState;
     case actions.completeTodo:
       const completedTodos = state.todoList.map((todo) => {
@@ -111,7 +104,7 @@ function reducer(state = initialState, action) {
     case actions.revertTodo:
       const revertedTodos = state.todoList.map((todo) => {
         if (todo.id === action.originalTodo.id) {
-          return { ...originalTodo };
+          return { ...action.originalTodo };
         } else {
           return todo;
         }
@@ -119,6 +112,8 @@ function reducer(state = initialState, action) {
       return {
         ...state,
         todoList: [...revertedTodos],
+        errorMessage: action.error.message,
+        isLoading: false,
       };
     case actions.clearError:
       return {

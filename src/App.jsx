@@ -98,7 +98,6 @@ function App() {
   const updateTodo = async (editedTodo) => {
     console.log('App: updateTodo: async');
     const originalTodo = todoState.todoList.find((todo) => todo.id === editedTodo.id);
-    // Optimistic Strategy
     dispatch({ type: todoActions.updateTodo, editedTodo: editedTodo });
     const payload = {
       records: [
@@ -126,9 +125,7 @@ function App() {
         throw new Error(resp.message);
       }
     } catch (error) {
-      dispatch({ type: todoActions.setLoadError, error: error });
-      // Optimistic Strategy
-      dispatch({ type: todoActions.revertTodo, originalTodo: originalTodo });
+      dispatch({ type: todoActions.revertTodo, error: error, originalTodo: originalTodo });
     } finally {
       dispatch({ type: todoActions.endRequest });
     }
@@ -137,7 +134,6 @@ function App() {
   const completeTodo = async (id) => {
     console.log('App: completeTodo: async');
     const originalTodo = todoState.todoList.find((todo) => todo.id === id);
-    // Optimistic Strategy
     dispatch({ type: todoActions.completeTodo, id: id });
     const payload = {
       records: [
@@ -164,9 +160,7 @@ function App() {
         throw new Error(resp.message);
       }
     } catch (error) {
-      dispatch({ type: todoActions.setLoadError, error: error });
-      // Optimistic Strategy
-      dispatch({ type: todoActions.revertTodo, originalTodo: originalTodo });
+      dispatch({ type: todoActions.revertTodo, error: error, originalTodo: originalTodo });
     } finally {
       dispatch({ type: todoActions.endRequest });
     }
