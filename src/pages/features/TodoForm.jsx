@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-import TextInputWithLabel from '../shared/TextInputWithLabel';
+import TextInputWithLabel from '../../shared/TextInputWithLabel';
 
 const StyledForm = styled.form`
   padding: 0.5rem;
