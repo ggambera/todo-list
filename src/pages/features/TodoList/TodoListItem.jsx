@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import styles from './TodoListItem.module.css';
-import TextInputWithLabel from '../../shared/TextInputWithLabel';
+import TextInputWithLabel from '../../../shared/TextInputWithLabel';
 
 function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   const [isEditing, setIsEditing] = useState(false);
